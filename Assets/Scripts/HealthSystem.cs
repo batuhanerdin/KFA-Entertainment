@@ -4,45 +4,77 @@ public class HealthSystem : MonoBehaviour
 {
     [Header("Health Settings")]
     [SerializeField] private int maxHealth = 100;
-    private int currentHealth;
+    [SerializeField] private int currentHealth;
 
-    // Eventler → UI, GameManager, AudioManager gibi sistemler abone olabilir
+    private Animator animator;
+    private bool isDead = false;
+
     public System.Action OnDeath;
-    public System.Action<int, int> OnHealthChanged; // (current, max)
+    public System.Action<int, int> OnHealthChanged;
 
     private void Awake()
     {
         currentHealth = maxHealth;
+        animator = GetComponentInChildren<Animator>();
     }
 
-    // === Hasar Alma ===
     public void TakeDamage(int amount)
     {
+        if (isDead) return;
+
         currentHealth -= amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
-        if (currentHealth <= 0)
+        if (currentHealth > 0)
         {
+            // ✅ sadece canlıyken Hit animasyonu
+            if (animator != null)
+                animator.SetTrigger("hit");
+        }
+        else
+        {
+            // ✅ can 0 → direkt öl
             Die();
         }
     }
 
-    // === İyileşme ===
+    private void Die()
+    {
+        if (isDead) return;
+        isDead = true;
+
+        Debug.Log($"{gameObject.name} öldü!");
+        OnDeath?.Invoke();
+
+        if (animator != null)
+        {
+            animator.SetTrigger("die");
+        }
+
+        // ✅ 1 saniye sonra SetActive(false)
+        Invoke(nameof(DisableObject), 1f);
+    }
+
+    private void DisableObject()
+    {
+        gameObject.SetActive(false);
+    }
+
     public void Heal(int amount)
     {
+        if (isDead) return;
+
         currentHealth += amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
     }
 
-    // === Max Can Arttırma (Upgrade için) ===
     public void IncreaseMaxHealth(int amount, bool healToFull = false)
     {
         maxHealth += amount;
-
         if (healToFull)
             currentHealth = maxHealth;
 
@@ -50,14 +82,6 @@ public class HealthSystem : MonoBehaviour
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
     }
 
-    // === Ölüm ===
-    private void Die()
-    {
-        Debug.Log($"{gameObject.name} öldü!");
-        OnDeath?.Invoke();
-    }
-
-    // === Getter Fonksiyonlar ===
     public int GetCurrentHealth() => currentHealth;
     public int GetMaxHealth() => maxHealth;
 }
