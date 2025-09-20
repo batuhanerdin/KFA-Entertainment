@@ -1,54 +1,119 @@
-using UnityEngine;
-using System.Collections;
+ï»¿using UnityEngine;
+using DG.Tweening;
 
 public class MerchantCartManager : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private GameObject cart;            // MerchantCart objesi
-    [SerializeField] private Transform entryPoint;       // sahneye gireceği nokta (sol/sağ)
-    [SerializeField] private Transform stopPoint;        // çitlerin önündeki durma noktası
-    [SerializeField] private GameObject[] marketObjects; // ateş, balta, fırın vs.
+    [SerializeField] private GameObject cart;
+    [SerializeField] private Transform entryPoint;
+    [SerializeField] private Transform stopPoint;
+    [SerializeField] private GameObject[] marketObjects;
 
-    [Header("Settings")]
-    [SerializeField] private float moveSpeed = 2f;
+    [Header("Cart Settings")]
+    [SerializeField] private float moveDuration = 3f;
+    [SerializeField] private float squashFactor = 0.85f;
+    [SerializeField] private float stretchFactor = 1.2f;
 
-    private bool isActive = false;
+    [Header("Market Settings")]
+    [SerializeField] private float riseDuration = 1f;
+    [SerializeField] private float riseOffset = 2f;
+
+    private Vector3 originalScale;
 
     private void Awake()
     {
         cart.SetActive(false);
         foreach (var obj in marketObjects)
             obj.SetActive(false);
+
+        if (cart != null)
+            originalScale = cart.transform.localScale;
     }
 
+    // ========================
+    // âœ… Market aÃ§ma (wave bitince)
+    // ========================
     public void ShowCart()
     {
-        StartCoroutine(CartRoutine());
-    }
+        if (cart == null) return;
 
-    private IEnumerator CartRoutine()
-    {
-        // Cart'ı sahneye sok
         cart.transform.position = entryPoint.position;
         cart.SetActive(true);
-        isActive = true;
 
-        while (Vector3.Distance(cart.transform.position, stopPoint.position) > 0.1f)
+        // ğŸµ Cart hareket sesi baÅŸlasÄ±n
+        AudioManager.Instance?.StartCartMovement();
+
+        Sequence seq = DOTween.Sequence();
+        seq.Append(cart.transform.DOMove(stopPoint.position, moveDuration)
+            .SetEase(Ease.InOutSine));
+
+        cart.transform.DOScale(
+            new Vector3(originalScale.x * stretchFactor, originalScale.y * squashFactor, originalScale.z),
+            0.3f
+        )
+        .SetLoops(-1, LoopType.Yoyo)
+        .SetEase(Ease.InOutSine)
+        .SetId("CartSquash");
+
+        seq.OnComplete(() =>
         {
-            cart.transform.position = Vector3.MoveTowards(
-                cart.transform.position,
-                stopPoint.position,
-                moveSpeed * Time.deltaTime
-            );
-            yield return null;
+            // ğŸµ Cart hareket sesi dursun
+            AudioManager.Instance?.StopCartMovement();
+
+            DOTween.Kill("CartSquash");
+            cart.transform.localScale = originalScale;
+
+            foreach (var obj in marketObjects)
+            {
+                obj.SetActive(true);
+
+                Vector3 targetPos = obj.transform.position;
+                Vector3 startPos = targetPos - Vector3.up * riseOffset;
+                obj.transform.position = startPos;
+
+                obj.transform.DOMoveY(targetPos.y, riseDuration)
+                    .SetEase(Ease.OutBack);
+            }
+
+            // ğŸµ ShopSetup sesi (kurulma)
+            AudioManager.Instance?.PlayShopSetup();
+
+            Debug.Log("MerchantCart kuruldu, market aÃ§Ä±ldÄ±!");
+        });
+    }
+
+    // ========================
+    // âœ… Market kapatma (wave baÅŸlayÄ±nca)
+    // ========================
+    public void HideCart()
+    {
+        if (cart == null) return;
+
+        // Market objelerini yerin iÃ§ine sok
+        foreach (var obj in marketObjects)
+        {
+            if (!obj.activeSelf) continue;
+
+            Vector3 startPos = obj.transform.position;
+            Vector3 targetPos = startPos - Vector3.up * riseOffset;
+
+            obj.transform.DOMoveY(targetPos.y, riseDuration)
+                .SetEase(Ease.InBack)
+                .OnComplete(() => obj.SetActive(false));
         }
 
-        cart.transform.position = stopPoint.position;
+        // ğŸµ ShopSetup sesi (kapanma)
+        AudioManager.Instance?.PlayShopSetup();
 
-        // Market objelerini aç
-        foreach (var obj in marketObjects)
-            obj.SetActive(true);
-
-        Debug.Log("MerchantCart yerine geldi, market açıldı!");
+        // Cart geri dÃ¶nsÃ¼n (sessiz)
+        Sequence seq = DOTween.Sequence();
+        seq.AppendInterval(riseDuration); // Ã¶nce market kapanÄ±ÅŸÄ±nÄ± bekle
+        seq.Append(cart.transform.DOMove(entryPoint.position, moveDuration)
+            .SetEase(Ease.InOutSine))
+            .OnComplete(() =>
+            {
+                cart.SetActive(false);
+                Debug.Log("MerchantCart sahneden Ã§Ä±ktÄ±, market kapandÄ±!");
+            });
     }
 }

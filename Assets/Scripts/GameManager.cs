@@ -5,52 +5,64 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
     private WaveManager waveManager;
-    private bool inBreak = false; // mola evresi
+    private MerchantCartManager cartManager;
+    private bool inBreak = false; // mola evresinde miyiz?
 
     private void Awake()
     {
-        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+        // Singleton
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
         waveManager = FindObjectOfType<WaveManager>();
+        cartManager = FindObjectOfType<MerchantCartManager>();
     }
 
     private void Start()
     {
-        // İstersen ilk dalgayı otomatik başlat
+        // İlk dalgayı başlat
         if (waveManager.HasMoreWaves())
-            waveManager.StartNextWave();
+            waveManager.StartNextWave(); // ✅ düzeltildi
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.P))
         {
-            // İSTENEN DAVRANIŞ:
-            // P tuşu HER ZAMAN sıradaki dalgayı başlatır (aktif dalga varken de).
-            if (waveManager.HasMoreWaves())
+            if (inBreak && waveManager.HasMoreWaves())
             {
-                inBreak = false; // mola iptal
+                inBreak = false;
+                if (cartManager != null)
+                    cartManager.HideCart(); // marketi kapat
                 waveManager.StartNextWave();
+                Debug.Log("Yeni wave başlatıldı!");
+            }
+            else if (!inBreak && waveManager.HasMoreWaves())
+            {
+                waveManager.StartNextWave(); // ✅ düzeltildi
+                Debug.Log("Erken wave başlatıldı!");
             }
             else
             {
-                Debug.Log("Tüm wave'ler başlatıldı.");
+                Debug.Log("Başlatılacak wave kalmadı.");
             }
         }
     }
 
-    // WaveManager sahne temizlendiğinde çağırır
+    // ✅ WaveManager sahne tamamen temizlenince çağırır
     public void OnWaveFinished()
     {
-        Debug.Log("Dalga bitti! Mola evresi başladı.");
+        inBreak = true;
+        Debug.Log("Dalga bitti! Mola evresi başladı. Market açılıyor...");
 
-        //waitingForNextWave = true;
-
-        // ✅ MerchantCart’ı çağır
-        var cartManager = FindObjectOfType<MerchantCartManager>();
         if (cartManager != null)
             cartManager.ShowCart();
     }
+
+    public bool IsInBreak() => inBreak;
 }

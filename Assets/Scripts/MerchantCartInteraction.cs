@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class MerchantCartInteraction : MonoBehaviour
 {
@@ -9,7 +9,7 @@ public class MerchantCartInteraction : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerInRange = true;
-            Debug.Log("Oyuncu marketin yan�nda");
+            Debug.Log("Oyuncu marketin yanında");
         }
     }
 
@@ -25,8 +25,12 @@ public class MerchantCartInteraction : MonoBehaviour
     {
         if (playerInRange && Input.GetKeyDown(KeyCode.E))
         {
-            Debug.Log("Market a��ld� deneme");
-            // Buraya UI a�ma kodu gelecek
+            Debug.Log("Market açıldı deneme");
+
+            // 🎵 ShopOpen sesi (UI açılıyor)
+            AudioManager.Instance?.PlayShopOpen();
+
+            // TODO: Burada market UI açma kodu gelecek
         }
     }
 }

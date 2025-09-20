@@ -12,10 +12,13 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip musicClip;
     [SerializeField] private AudioClip dieSfx;
     [SerializeField] private AudioClip[] footstepClips;
+    [SerializeField] private AudioClip playerAttackSfx;
+    [SerializeField] private AudioClip[] hitSfxClips;
 
-    [Header("Attack & Hit Clips")]
-    [SerializeField] private AudioClip playerAttackSfx;    // ✅ Player saldırı sesi
-    [SerializeField] private AudioClip[] hitSfxClips;      // ✅ Düşman hasar sesleri
+    [Header("Shop / Cart Clips")]
+    [SerializeField] private AudioClip cartMovementSfx;   // Cart hareketi
+    [SerializeField] private AudioClip shopSetupSfx;      // Market sahneye kuruldu/kapatıldı
+    [SerializeField] private AudioClip shopOpenSfx;       // Market UI açıldı (E tuşu)
 
     [Header("General Volume")]
     [Range(0f, 1f)] public float musicVolume = 1f;
@@ -26,6 +29,9 @@ public class AudioManager : MonoBehaviour
     [Range(0f, 1f)] public float dieVolume = 1f;
     [Range(0f, 1f)] public float footstepVolume = 1f;
     [Range(0f, 1f)] public float playerAttackVolume = 1f;
+    [Range(0f, 1f)] public float cartMovementVolume = 1f;
+    [Range(0f, 1f)] public float shopSetupVolume = 1f;
+    [Range(0f, 1f)] public float shopOpenVolume = 1f;
 
     private void Awake()
     {
@@ -42,7 +48,6 @@ public class AudioManager : MonoBehaviour
             musicSource.loop = true;
             musicSource.playOnAwake = false;
         }
-
         if (sfxSource != null)
         {
             sfxSource.loop = false;
@@ -53,8 +58,7 @@ public class AudioManager : MonoBehaviour
     // === Music ===
     public void PlayMusic(float volume = 1f)
     {
-        if (musicSource == null || musicClip == null) return;
-
+        if (!musicSource || !musicClip) return;
         musicSource.clip = musicClip;
         musicSource.volume = musicVolume * volume;
         musicSource.Play();
@@ -62,48 +66,74 @@ public class AudioManager : MonoBehaviour
 
     public void StopMusic()
     {
-        if (musicSource != null)
-            musicSource.Stop();
+        if (musicSource) musicSource.Stop();
     }
 
-    // === Internal SFX helper ===
-    private void PlaySfxInternal(AudioClip clip, float finalVolume)
+    // === Internal helper ===
+    private void PlaySfxOneShot(AudioClip clip, float mult = 1f)
     {
-        if (sfxSource != null && clip != null)
-            sfxSource.PlayOneShot(clip, finalVolume);
+        if (!sfxSource || !clip) return;
+        sfxSource.PlayOneShot(clip, sfxVolume * mult);
     }
 
-    // === Specific SFX ===
+    // === Public SFX ===
     public void PlayHit(float volume = 1f)
     {
-        if (hitSfxClips.Length == 0) return;
-
-        int index = Random.Range(0, hitSfxClips.Length);
-        float finalVolume = sfxVolume * hitVolume * volume;
-        PlaySfxInternal(hitSfxClips[index], finalVolume);
+        if (hitSfxClips == null || hitSfxClips.Length == 0) return;
+        int i = Random.Range(0, hitSfxClips.Length);
+        PlaySfxOneShot(hitSfxClips[i], hitVolume * volume);
     }
 
     public void PlayDie(float volume = 1f)
-    {
-        float finalVolume = sfxVolume * dieVolume * volume;
-        PlaySfxInternal(dieSfx, finalVolume);
-    }
+        => PlaySfxOneShot(dieSfx, dieVolume * volume);
+
+    public void PlayPlayerAttack(float volume = 1f)
+        => PlaySfxOneShot(playerAttackSfx, playerAttackVolume * volume);
 
     public void PlayFootstep(float volume = 1f)
     {
-        if (footstepClips.Length == 0) return;
-
-        int index = Random.Range(0, footstepClips.Length);
-        float finalVolume = sfxVolume * footstepVolume * volume;
-        PlaySfxInternal(footstepClips[index], finalVolume);
+        if (footstepClips == null || footstepClips.Length == 0) return;
+        int i = Random.Range(0, footstepClips.Length);
+        PlaySfxOneShot(footstepClips[i], footstepVolume * volume);
     }
 
-    public void PlayPlayerAttack(float volume = 1f)
+    // === Cart & Shop Sesleri ===
+    public void StartCartMovement()
     {
-        float finalVolume = sfxVolume * playerAttackVolume * volume;
-        PlaySfxInternal(playerAttackSfx, finalVolume);
+        if (!sfxSource || !cartMovementSfx) return;
+        sfxSource.clip = cartMovementSfx;
+        sfxSource.volume = sfxVolume * cartMovementVolume;
+        sfxSource.loop = true; // hareket boyunca devam etsin
+        sfxSource.Play();
     }
 
-    // Footstep dizisine dışarıdan erişim (sıralı çalmak için PlayerMovement’te kullanılıyor olabilir)
+    public void StopCartMovement()
+    {
+        if (!sfxSource) return;
+        if (sfxSource.isPlaying && sfxSource.clip == cartMovementSfx)
+            sfxSource.Stop();
+        sfxSource.loop = false;
+        sfxSource.clip = null;
+    }
+
+    public void PlayShopSetup()
+        => PlaySfxOneShot(shopSetupSfx, shopSetupVolume);
+
+    public void PlayShopOpen()
+        => PlaySfxOneShot(shopOpenSfx, shopOpenVolume);
+
+    // === Footstep Sequential Helper ===
     public AudioClip[] GetFootstepClips() => footstepClips;
+
+    public int PlayFootstepSequential(int currentIndex, float volume = 1f)
+    {
+        if (footstepClips == null || footstepClips.Length == 0) return 0;
+        if (currentIndex < 0 || currentIndex >= footstepClips.Length) currentIndex = 0;
+
+        PlaySfxOneShot(footstepClips[currentIndex], footstepVolume * volume);
+
+        int next = currentIndex + 1;
+        if (next >= footstepClips.Length) next = 0;
+        return next;
+    }
 }

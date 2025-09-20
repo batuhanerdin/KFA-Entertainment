@@ -14,7 +14,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Footstep Settings")]
     [SerializeField] private float footstepInterval = 0.4f;
     private float footstepTimer;
-    private int footstepIndex = 0; // ✅ kaldığı yerden devam etsin
+    private int footstepIndex = 0; // sıralı çalma için
 
     private void Awake()
     {
@@ -83,38 +83,20 @@ public class PlayerMovement : MonoBehaviour
             footstepTimer -= Time.deltaTime;
             if (footstepTimer <= 0f)
             {
-                PlayNextFootstep();
+                if (AudioManager.Instance != null)
+                    footstepIndex = AudioManager.Instance.PlayFootstepSequential(footstepIndex);
+
                 footstepTimer = footstepInterval;
             }
         }
         else
         {
-            footstepTimer = 0f; // durunca resetlenmesin, kaldığı yerden devam etsin
+            footstepTimer = 0f;
         }
     }
 
-    private void PlayNextFootstep()
-    {
-        if (AudioManager.Instance == null) return;
-        if (AudioManager.Instance == null) return;
-
-        var clips = AudioManager.Instance.GetFootstepClips();
-        if (clips == null || clips.Length == 0) return;
-
-        // sıradaki sesi çal
-        AudioManager.Instance.PlayFootstep();
-
-        // index ilerlet
-        footstepIndex++;
-        if (footstepIndex >= clips.Length)
-            footstepIndex = 0;
-    }
-
-    // AttackSystem çağıracak
-    public void LockFlip(bool locked)
-    {
-        flipLocked = locked;
-    }
+    // Flip kontrolü saldırıda kilitlemek için
+    public void LockFlip(bool locked) => flipLocked = locked;
 
     public void SetFacingDirection(Vector3 dir)
     {
