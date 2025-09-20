@@ -8,8 +8,13 @@ public class PlayerMovement : MonoBehaviour
 
     private StatSystem stats;
     private Animator animator;
-    private bool flipLocked = false; // ✅ saldırı sırasında yön kilidi
+    private bool flipLocked = false;
     private Transform spriteTransform;
+
+    [Header("Footstep Settings")]
+    [SerializeField] private float footstepInterval = 0.4f;
+    private float footstepTimer;
+    private int footstepIndex = 0; // ✅ kaldığı yerden devam etsin
 
     private void Awake()
     {
@@ -18,7 +23,7 @@ public class PlayerMovement : MonoBehaviour
 
         stats = GetComponent<StatSystem>();
         animator = GetComponentInChildren<Animator>();
-        spriteTransform = animator.transform; // animator child objesi
+        spriteTransform = animator.transform;
     }
 
     private void Update()
@@ -26,6 +31,7 @@ public class PlayerMovement : MonoBehaviour
         HandleInput();
         HandleAnimations();
         HandleSpriteFlip();
+        HandleFootsteps();
     }
 
     private void FixedUpdate()
@@ -58,7 +64,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleSpriteFlip()
     {
-        if (flipLocked) return; // saldırı sırasında flip kapalı
+        if (flipLocked) return;
 
         Vector3 scale = spriteTransform.localScale;
 
@@ -68,15 +74,48 @@ public class PlayerMovement : MonoBehaviour
             spriteTransform.localScale = new Vector3(-Mathf.Abs(scale.x), scale.y, scale.z);
     }
 
-   
+    private void HandleFootsteps()
+    {
+        bool isMoving = moveInput.magnitude > 0.1f;
 
-    // ✅ AttackSystem buradan çağıracak
+        if (isMoving)
+        {
+            footstepTimer -= Time.deltaTime;
+            if (footstepTimer <= 0f)
+            {
+                PlayNextFootstep();
+                footstepTimer = footstepInterval;
+            }
+        }
+        else
+        {
+            footstepTimer = 0f; // durunca resetlenmesin, kaldığı yerden devam etsin
+        }
+    }
+
+    private void PlayNextFootstep()
+    {
+        if (AudioManager.Instance == null) return;
+        if (AudioManager.Instance == null) return;
+
+        var clips = AudioManager.Instance.GetFootstepClips();
+        if (clips == null || clips.Length == 0) return;
+
+        // sıradaki sesi çal
+        AudioManager.Instance.PlayFootstep();
+
+        // index ilerlet
+        footstepIndex++;
+        if (footstepIndex >= clips.Length)
+            footstepIndex = 0;
+    }
+
+    // AttackSystem çağıracak
     public void LockFlip(bool locked)
     {
         flipLocked = locked;
     }
 
-    // ✅ AttackSystem çağıracak
     public void SetFacingDirection(Vector3 dir)
     {
         Vector3 scale = spriteTransform.localScale;

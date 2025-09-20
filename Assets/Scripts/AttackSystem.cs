@@ -40,6 +40,7 @@ public class AttackSystem : MonoBehaviour
 
     private void StartAttack(Vector3 targetPos)
     {
+        AudioManager.Instance.PlayPlayerAttack();
         cooldownTimer = 1f / stats.AttackSpeed;
 
         // Flip yönünü hedefe göre ayarla + kilitle

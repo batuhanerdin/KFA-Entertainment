@@ -22,6 +22,8 @@ public class HealthSystem : MonoBehaviour
     {
         if (isDead) return;
 
+        AudioManager.Instance.PlayHit();
+
         currentHealth -= amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
@@ -29,13 +31,15 @@ public class HealthSystem : MonoBehaviour
 
         if (currentHealth > 0)
         {
-            // ✅ sadece canlıyken Hit animasyonu
+            // ✅ Hit animasyonu + ses
             if (animator != null)
                 animator.SetTrigger("hit");
+
+            AudioManager.Instance?.PlayHit();
         }
         else
         {
-            // ✅ can 0 → direkt öl
+            // ✅ Ölüm
             Die();
         }
     }
@@ -45,15 +49,17 @@ public class HealthSystem : MonoBehaviour
         if (isDead) return;
         isDead = true;
 
+        AudioManager.Instance.PlayDie();
+
         Debug.Log($"{gameObject.name} öldü!");
         OnDeath?.Invoke();
 
         if (animator != null)
-        {
             animator.SetTrigger("die");
-        }
 
-        // ✅ 1 saniye sonra SetActive(false)
+        AudioManager.Instance?.PlayDie();
+
+        // 1 saniye sonra kapat
         Invoke(nameof(DisableObject), 1f);
     }
 
