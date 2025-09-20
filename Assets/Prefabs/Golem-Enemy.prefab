@@ -100,6 +100,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   currentHealth: 0
+  stunOnHitDuration: 0.7
+  disableDelayOnDeath: 1
 --- !u!114 &4037329548272486662
 MonoBehaviour:
   m_ObjectHideFlags: 0

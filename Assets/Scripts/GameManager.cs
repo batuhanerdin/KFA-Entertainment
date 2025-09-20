@@ -44,8 +44,13 @@ public class GameManager : MonoBehaviour
     // WaveManager sahne temizlendiğinde çağırır
     public void OnWaveFinished()
     {
-        // Sahne temiz → mola evresi (upgrade zamanı)
-        inBreak = true;
-        Debug.Log("Mola: Sahnede düşman yok. P ile sıradaki dalgayı başlatabilirsin.");
+        Debug.Log("Dalga bitti! Mola evresi başladı.");
+
+        //waitingForNextWave = true;
+
+        // ✅ MerchantCart’ı çağır
+        var cartManager = FindObjectOfType<MerchantCartManager>();
+        if (cartManager != null)
+            cartManager.ShowCart();
     }
 }

@@ -9,6 +9,10 @@ public class PathFollower : MonoBehaviour
 
     private Vector3 targetPos;
 
+    // ✅ Stun sistemi
+    private bool isStunned = false;
+    private float stunTimer = 0f;
+
     private void Start()
     {
         if (currentNode != null) SetTarget(currentNode);
@@ -16,6 +20,14 @@ public class PathFollower : MonoBehaviour
 
     private void Update()
     {
+        // Stun aktifse sayaç çalışsın
+        if (isStunned)
+        {
+            stunTimer -= Time.deltaTime;
+            if (stunTimer <= 0f) isStunned = false;
+            return; // ✅ stun sırasında hareket etmez
+        }
+
         if (currentNode == null) return;
 
         Vector3 dir = (targetPos - transform.position).normalized;
@@ -53,13 +65,16 @@ public class PathFollower : MonoBehaviour
 
     private void OnPathCompleted()
     {
-        // Merkeze ulaştı → örn. base'e hasar verebilirsin:
-        // GameManager.Instance.OnEnemyEscaped();
-
-        // WaveManager'a "bir düşman sahneden çıktı" de
         WaveManager wm = FindObjectOfType<WaveManager>();
         if (wm != null) wm.OnEnemyRemoved();
 
         Destroy(gameObject);
+    }
+
+    // ✅ HealthSystem burayı çağıracak
+    public void ApplyStun(float duration)
+    {
+        isStunned = true;
+        stunTimer = duration;
     }
 }
