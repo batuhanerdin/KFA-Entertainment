@@ -12,6 +12,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip[] footstepClips;
     [SerializeField] private AudioClip playerAttackSfx;
     [SerializeField] private AudioClip[] hitSfxClips;
+    [SerializeField] private AudioClip coinPickupSfx;
 
     [Header("Shop / Cart Clips")]
     [SerializeField] private AudioClip cartMovementSfx;
@@ -29,7 +30,7 @@ public class AudioManager : MonoBehaviour
     [Range(0f, 1f)] public float cartMovementVolume = 1f;
     [Range(0f, 1f)] public float shopSetupVolume = 1f;
     [Range(0f, 1f)] public float shopOpenVolume = 1f;
-
+    [Range(0f, 1f)] public float coinPickupVolume = 1f;
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -98,6 +99,8 @@ public class AudioManager : MonoBehaviour
         sfxSource.volume = sfxVolume; // reset
     }
 
+    public void PlayCoinPickup()
+    => PlaySfxOneShot(coinPickupSfx, coinPickupVolume);
     public void PlayShopSetup(float volume = 1f)
         => PlaySfxOneShot(shopSetupSfx, shopSetupVolume * volume);
 

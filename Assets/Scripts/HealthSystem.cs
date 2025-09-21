@@ -7,10 +7,11 @@ public class HealthSystem : MonoBehaviour
     [SerializeField] private int currentHealth;
 
     [Header("Reactions")]
-    [SerializeField] private float stunOnHitDuration = 0.5f; // hasar alınca stun süresi
-    [SerializeField] private float disableDelayOnDeath = 1f; // ölünce kaç saniye sonra kapanacak
+    [SerializeField] private float stunOnHitDuration = 0.5f;
+    [SerializeField] private float disableDelayOnDeath = 1f;
 
     private Animator animator;
+    private Collider enemyCollider;
     private bool isDead = false;
 
     public System.Action OnDeath;
@@ -20,6 +21,7 @@ public class HealthSystem : MonoBehaviour
     {
         currentHealth = maxHealth;
         animator = GetComponentInChildren<Animator>();
+        enemyCollider = GetComponent<Collider>();
     }
 
     public void TakeDamage(int amount)
@@ -30,13 +32,11 @@ public class HealthSystem : MonoBehaviour
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
-        // hasar alınca kısa stun
         var path = GetComponent<PathFollower>();
         if (path != null) path.ApplyStun(stunOnHitDuration);
 
         if (currentHealth > 0)
         {
-            // ✅ doğru tetik adları
             if (animator != null) animator.SetTrigger("hit");
             AudioManager.Instance?.PlayHit();
         }
@@ -51,16 +51,21 @@ public class HealthSystem : MonoBehaviour
         if (isDead) return;
         isDead = true;
 
-        if (animator != null) animator.SetTrigger("die"); // ✅ doğru tetik
+        if (animator != null) animator.SetTrigger("die");
         AudioManager.Instance?.PlayDie();
 
-        // hareketi hemen durdur
+        if (enemyCollider != null)
+            enemyCollider.enabled = false;
+
         var path = GetComponent<PathFollower>();
         if (path != null) path.enabled = false;
 
+        // ✅ Drop işlemleri ObjectDropper’a taşındı
+        var dropper = GetComponent<ObjectDropper>();
+        if (dropper != null) dropper.DropObjects();
+
         OnDeath?.Invoke();
 
-        // 1 sn sonra gizle (pool için uygun)
         Invoke(nameof(DisableObject), disableDelayOnDeath);
     }
 

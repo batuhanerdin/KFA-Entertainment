@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8267845746215445852}
   - component: {fileID: 4899614618548497955}
   - component: {fileID: 4037329548272486662}
+  - component: {fileID: 3991147739881236990}
   m_Layer: 8
   m_Name: Golem-Enemy
   m_TagString: Enemy
@@ -34,6 +35,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 570835629756373625}
+  - {fileID: 6468036544594719929}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &1417551576355134846
@@ -118,6 +120,59 @@ MonoBehaviour:
   moveSpeed: 4
   nodeReachThreshold: 0.3
   spreadRadius: 3
+--- !u!114 &3991147739881236990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 835210960601801207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07a70c8e9b967944299f4a63a5f4bfd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  coinPrefab: {fileID: 3354059232915384412, guid: dc98c10b106c6214db80c671f716742f,
+    type: 3}
+  minCoinValue: 10
+  maxCoinValue: 20
+  lowValueSprite: {fileID: 21300000, guid: 8ffa7a26aca3aba4a82cc241a5779bc2, type: 3}
+  midValueSprite: {fileID: 21300000, guid: 678c8b5ac43c4d446bd4276e2e88f13b, type: 3}
+  highValueSprite: {fileID: 21300000, guid: 0b74a2936a284a945a91d0600c950b9b, type: 3}
+  deathParticle: {fileID: 3548588485384254792, guid: 32af7ea914938b14dad9bd1e6e31ec76,
+    type: 3}
+  dropPoint: {fileID: 6468036544594719929}
+--- !u!1 &7565126612272246604
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6468036544594719929}
+  m_Layer: 8
+  m_Name: DropPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6468036544594719929
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7565126612272246604}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.2, z: -0.1}
+  m_LocalScale: {x: -1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1555772221175460045}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7628664103839861627
 GameObject:
   m_ObjectHideFlags: 0

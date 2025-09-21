@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2746986890903020289}
   - component: {fileID: 9109879968317625038}
   - component: {fileID: 2310806207839866749}
+  - component: {fileID: 2646646124740507887}
   m_Layer: 8
   m_Name: Mushroom-Enemy
   m_TagString: Enemy
@@ -34,6 +35,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 721385765880360274}
+  - {fileID: 968958216646741345}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &5100498089882698716
@@ -118,6 +120,28 @@ MonoBehaviour:
   moveSpeed: 4
   nodeReachThreshold: 0.3
   spreadRadius: 3
+--- !u!114 &2646646124740507887
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1320743542102932379}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07a70c8e9b967944299f4a63a5f4bfd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  coinPrefab: {fileID: 3354059232915384412, guid: dc98c10b106c6214db80c671f716742f,
+    type: 3}
+  minCoinValue: 2
+  maxCoinValue: 6
+  lowValueSprite: {fileID: 21300000, guid: 8ffa7a26aca3aba4a82cc241a5779bc2, type: 3}
+  midValueSprite: {fileID: 21300000, guid: 678c8b5ac43c4d446bd4276e2e88f13b, type: 3}
+  highValueSprite: {fileID: 21300000, guid: 0b74a2936a284a945a91d0600c950b9b, type: 3}
+  deathParticle: {fileID: 3548588485384254792, guid: 93716997edfea4a40af5254c1ccdb8e5,
+    type: 3}
+  dropPoint: {fileID: 968958216646741345}
 --- !u!1 &2537888084145358799
 GameObject:
   m_ObjectHideFlags: 0
@@ -224,3 +248,34 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!1 &2617741163969381499
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 968958216646741345}
+  m_Layer: 8
+  m_Name: DropPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &968958216646741345
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2617741163969381499}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.2, z: -0.1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 660270806917786161}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
