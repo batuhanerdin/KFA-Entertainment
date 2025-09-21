@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 1daabfd559720c642b257b066dc4244a
+guid: dd886b2fe5166d14f887488a32d022bb
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,13 +97,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: cup_01a_0
+      name: card_frame_option_green_0
       rect:
         serializedVersion: 2
-        x: 8
-        y: 4
-        width: 16
-        height: 24
+        x: 139
+        y: 1089
+        width: 1242
+        height: 441
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -111,8 +111,29 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 27cde2c2d63c5f943baf2cf5959aa6af
-      internalID: 1322171377
+      spriteID: 20cfc377e8545214e93608d99d480e05
+      internalID: -937863029
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: card_frame_option_green_1
+      rect:
+        serializedVersion: 2
+        x: 1339
+        y: 50
+        width: 71
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 96ab8cedf763e5c44b73518edd45b2ee
+      internalID: 1262875843
       vertices: []
       indices: 
       edges: []
@@ -128,7 +149,8 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      cup_01a_0: 1322171377
+      card_frame_option_green_0: -937863029
+      card_frame_option_green_1: 1262875843
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
