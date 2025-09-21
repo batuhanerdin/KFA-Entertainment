@@ -4,24 +4,21 @@ public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
 
-    [Header("Audio Sources")]
-    public AudioSource musicSource;
+    [Header("Audio Source")]
     public AudioSource sfxSource;
 
-    [Header("Audio Clips")]
-    [SerializeField] private AudioClip musicClip;
+    [Header("SFX Clips")]
     [SerializeField] private AudioClip dieSfx;
     [SerializeField] private AudioClip[] footstepClips;
     [SerializeField] private AudioClip playerAttackSfx;
     [SerializeField] private AudioClip[] hitSfxClips;
 
     [Header("Shop / Cart Clips")]
-    [SerializeField] private AudioClip cartMovementSfx;   // Cart hareketi
-    [SerializeField] private AudioClip shopSetupSfx;      // Market sahneye kuruldu/kapatıldı
-    [SerializeField] private AudioClip shopOpenSfx;       // Market UI açıldı (E tuşu)
+    [SerializeField] private AudioClip cartMovementSfx;
+    [SerializeField] private AudioClip shopSetupSfx;
+    [SerializeField] private AudioClip shopOpenSfx;
 
     [Header("General Volume")]
-    [Range(0f, 1f)] public float musicVolume = 1f;
     [Range(0f, 1f)] public float sfxVolume = 1f;
 
     [Header("Individual Volumes")]
@@ -43,30 +40,11 @@ public class AudioManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        if (musicSource != null)
-        {
-            musicSource.loop = true;
-            musicSource.playOnAwake = false;
-        }
         if (sfxSource != null)
         {
             sfxSource.loop = false;
             sfxSource.playOnAwake = false;
         }
-    }
-
-    // === Music ===
-    public void PlayMusic(float volume = 1f)
-    {
-        if (!musicSource || !musicClip) return;
-        musicSource.clip = musicClip;
-        musicSource.volume = musicVolume * volume;
-        musicSource.Play();
-    }
-
-    public void StopMusic()
-    {
-        if (musicSource) musicSource.Stop();
     }
 
     // === Internal helper ===
@@ -98,29 +76,33 @@ public class AudioManager : MonoBehaviour
     }
 
     // === Cart & Shop Sesleri ===
-    public void StartCartMovement()
+    public void PlayCartMovement(float volume = 1f)
     {
         if (!sfxSource || !cartMovementSfx) return;
+
         sfxSource.clip = cartMovementSfx;
-        sfxSource.volume = sfxVolume * cartMovementVolume;
-        sfxSource.loop = true; // hareket boyunca devam etsin
+        sfxSource.volume = sfxVolume * cartMovementVolume * volume;
+        sfxSource.loop = true;
         sfxSource.Play();
     }
 
     public void StopCartMovement()
     {
         if (!sfxSource) return;
+
         if (sfxSource.isPlaying && sfxSource.clip == cartMovementSfx)
             sfxSource.Stop();
+
         sfxSource.loop = false;
         sfxSource.clip = null;
+        sfxSource.volume = sfxVolume; // reset
     }
 
-    public void PlayShopSetup()
-        => PlaySfxOneShot(shopSetupSfx, shopSetupVolume);
+    public void PlayShopSetup(float volume = 1f)
+        => PlaySfxOneShot(shopSetupSfx, shopSetupVolume * volume);
 
-    public void PlayShopOpen()
-        => PlaySfxOneShot(shopOpenSfx, shopOpenVolume);
+    public void PlayShopOpen(float volume = 1f)
+        => PlaySfxOneShot(shopOpenSfx, shopOpenVolume * volume);
 
     // === Footstep Sequential Helper ===
     public AudioClip[] GetFootstepClips() => footstepClips;

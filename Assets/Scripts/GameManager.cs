@@ -6,11 +6,10 @@ public class GameManager : MonoBehaviour
 
     private WaveManager waveManager;
     private MerchantCartManager cartManager;
-    private bool inBreak = false; // mola evresinde miyiz?
+    private bool inBreak = false;
 
     private void Awake()
     {
-        // Singleton
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -25,36 +24,43 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        // İlk dalgayı başlat
         if (waveManager.HasMoreWaves())
-            waveManager.StartNextWave(); // ✅ düzeltildi
+        {
+            waveManager.StartNextWave();
+            SwitchToWaveMusic();
+        }
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.P))
+            HandleWaveKey();
+    }
+
+    private void HandleWaveKey()
+    {
+        if (inBreak && waveManager.HasMoreWaves())
         {
-            if (inBreak && waveManager.HasMoreWaves())
-            {
-                inBreak = false;
-                if (cartManager != null)
-                    cartManager.HideCart(); // marketi kapat
-                waveManager.StartNextWave();
-                Debug.Log("Yeni wave başlatıldı!");
-            }
-            else if (!inBreak && waveManager.HasMoreWaves())
-            {
-                waveManager.StartNextWave(); // ✅ düzeltildi
-                Debug.Log("Erken wave başlatıldı!");
-            }
-            else
-            {
-                Debug.Log("Başlatılacak wave kalmadı.");
-            }
+            inBreak = false;
+
+            if (cartManager != null)
+                cartManager.HideCart();
+
+            waveManager.StartNextWave();
+            SwitchToWaveMusic();
+            Debug.Log("Yeni wave başlatıldı!");
+        }
+        else if (!inBreak && waveManager.HasMoreWaves())
+        {
+            waveManager.StartNextWave();
+            Debug.Log("Erken wave başlatıldı!");
+        }
+        else
+        {
+            Debug.Log("Başlatılacak wave kalmadı.");
         }
     }
 
-    // ✅ WaveManager sahne tamamen temizlenince çağırır
     public void OnWaveFinished()
     {
         inBreak = true;
@@ -62,7 +68,20 @@ public class GameManager : MonoBehaviour
 
         if (cartManager != null)
             cartManager.ShowCart();
+
+        SwitchToChillMusic();
     }
 
     public bool IsInBreak() => inBreak;
+
+    // === MUSIC HELPERS ===
+    private void SwitchToWaveMusic()
+    {
+        MusicManager.Instance?.PlayWaveMusic();
+    }
+
+    private void SwitchToChillMusic()
+    {
+        MusicManager.Instance?.PlayChillMusic();
+    }
 }

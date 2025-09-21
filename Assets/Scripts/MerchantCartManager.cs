@@ -4,116 +4,166 @@ using DG.Tweening;
 public class MerchantCartManager : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private GameObject cart;
-    [SerializeField] private Transform entryPoint;
+    [SerializeField] private Transform cartTransform;
+    [SerializeField] private Transform startPoint;
     [SerializeField] private Transform stopPoint;
-    [SerializeField] private GameObject[] marketObjects;
+    [SerializeField] private Transform shopObjectsParent;
+    [SerializeField] private Animator cartAnimator;
 
-    [Header("Cart Settings")]
-    [SerializeField] private float moveDuration = 3f;
-    [SerializeField] private float squashFactor = 0.85f;
-    [SerializeField] private float stretchFactor = 1.2f;
+    [Header("Settings")]
+    public float moveSpeed = 5f;
+    public float shopAnimDuration = 1f;
+    public float shopAnimOffset = 2f;
+    public float cartMoveDelay = 0.4f; // ✅ shop kapandıktan sonra ekstra bekleme
 
-    [Header("Market Settings")]
-    [SerializeField] private float riseDuration = 1f;
-    [SerializeField] private float riseOffset = 2f;
-
-    private Vector3 originalScale;
+    private bool moving = false;
+    private bool goingToStop = false;
+    private Vector3[] originalPositions;
 
     private void Awake()
     {
-        cart.SetActive(false);
-        foreach (var obj in marketObjects)
-            obj.SetActive(false);
-
-        if (cart != null)
-            originalScale = cart.transform.localScale;
+        InitShopObjects();
+        InitCartPosition();
     }
 
-    // ========================
-    // ✅ Market açma (wave bitince)
-    // ========================
+    private void Update()
+    {
+        HandleCartMovement();
+    }
+
+    private void InitShopObjects()
+    {
+        if (shopObjectsParent != null)
+        {
+            shopObjectsParent.gameObject.SetActive(false);
+
+            int childCount = shopObjectsParent.childCount;
+            originalPositions = new Vector3[childCount];
+            for (int i = 0; i < childCount; i++)
+                originalPositions[i] = shopObjectsParent.GetChild(i).localPosition;
+        }
+    }
+
+    private void InitCartPosition()
+    {
+        if (cartTransform != null && startPoint != null)
+            cartTransform.position = startPoint.position;
+    }
+
+    private void HandleCartMovement()
+    {
+        if (!moving) return;
+
+        Transform target = goingToStop ? stopPoint : startPoint;
+        MoveCartTowards(target);
+
+        if (ReachedTarget(target))
+            OnCartReachedTarget();
+    }
+
+    private void MoveCartTowards(Transform target)
+    {
+        cartTransform.position = Vector3.MoveTowards(
+            cartTransform.position,
+            target.position,
+            moveSpeed * Time.deltaTime
+        );
+    }
+
+    private bool ReachedTarget(Transform target)
+    {
+        return Vector3.Distance(cartTransform.position, target.position) < 0.05f;
+    }
+
+    private void OnCartReachedTarget()
+    {
+        moving = false;
+        cartAnimator.SetBool("isMoving", false);
+
+        AudioManager.Instance?.StopCartMovement();
+
+        if (goingToStop)
+            SetupShop();
+        else
+            CloseShopImmediate();
+    }
+
+    private void SetupShop()
+    {
+        if (shopObjectsParent != null)
+        {
+            shopObjectsParent.gameObject.SetActive(true);
+            RaiseShopObjects();
+        }
+    }
+
+    private void CloseShopImmediate()
+    {
+        if (shopObjectsParent != null)
+            shopObjectsParent.gameObject.SetActive(false);
+    }
+
+    // === Public API ===
     public void ShowCart()
     {
-        if (cart == null) return;
+        if (cartTransform == null || stopPoint == null) return;
 
-        cart.transform.position = entryPoint.position;
-        cart.SetActive(true);
+        goingToStop = true;
+        moving = true;
+        cartAnimator.SetBool("isMoving", true);
 
-        // 🎵 Cart hareket sesi başlasın
-        AudioManager.Instance?.StartCartMovement();
+        AudioManager.Instance?.PlayCartMovement();
+    }
 
-        Sequence seq = DOTween.Sequence();
-        seq.Append(cart.transform.DOMove(stopPoint.position, moveDuration)
-            .SetEase(Ease.InOutSine));
+    public void HideCart()
+    {
+        if (cartTransform == null || startPoint == null) return;
 
-        cart.transform.DOScale(
-            new Vector3(originalScale.x * stretchFactor, originalScale.y * squashFactor, originalScale.z),
-            0.3f
-        )
-        .SetLoops(-1, LoopType.Yoyo)
-        .SetEase(Ease.InOutSine)
-        .SetId("CartSquash");
+        // ✅ Önce market objelerini indir + setup sfx
+        if (shopObjectsParent != null && shopObjectsParent.gameObject.activeSelf)
+            LowerShopObjects();
 
-        seq.OnComplete(() =>
+        // ✅ Shop animasyonu bittikten 0.4s sonra cart hareket etmeye başlasın
+        DOVirtual.DelayedCall(shopAnimDuration + cartMoveDelay, () =>
         {
-            // 🎵 Cart hareket sesi dursun
-            AudioManager.Instance?.StopCartMovement();
+            goingToStop = false;
+            moving = true;
+            cartAnimator.SetBool("isMoving", true);
 
-            DOTween.Kill("CartSquash");
-            cart.transform.localScale = originalScale;
-
-            foreach (var obj in marketObjects)
-            {
-                obj.SetActive(true);
-
-                Vector3 targetPos = obj.transform.position;
-                Vector3 startPos = targetPos - Vector3.up * riseOffset;
-                obj.transform.position = startPos;
-
-                obj.transform.DOMoveY(targetPos.y, riseDuration)
-                    .SetEase(Ease.OutBack);
-            }
-
-            // 🎵 ShopSetup sesi (kurulma)
-            AudioManager.Instance?.PlayShopSetup();
-
-            Debug.Log("MerchantCart kuruldu, market açıldı!");
+            AudioManager.Instance?.PlayCartMovement();
         });
     }
 
-    // ========================
-    // ✅ Market kapatma (wave başlayınca)
-    // ========================
-    public void HideCart()
+    // === Shop Objeleri ===
+    private void RaiseShopObjects()
     {
-        if (cart == null) return;
-
-        // Market objelerini yerin içine sok
-        foreach (var obj in marketObjects)
+        for (int i = 0; i < shopObjectsParent.childCount; i++)
         {
-            if (!obj.activeSelf) continue;
-
-            Vector3 startPos = obj.transform.position;
-            Vector3 targetPos = startPos - Vector3.up * riseOffset;
-
-            obj.transform.DOMoveY(targetPos.y, riseDuration)
-                .SetEase(Ease.InBack)
-                .OnComplete(() => obj.SetActive(false));
+            Transform obj = shopObjectsParent.GetChild(i);
+            Vector3 startPos = originalPositions[i] - new Vector3(0, shopAnimOffset, 0);
+            obj.localPosition = startPos;
+            obj.DOLocalMove(originalPositions[i], shopAnimDuration).SetEase(Ease.OutBack);
         }
 
-        // 🎵 ShopSetup sesi (kapanma)
         AudioManager.Instance?.PlayShopSetup();
+    }
 
-        // Cart geri dönsün (sessiz)
-        Sequence seq = DOTween.Sequence();
-        seq.AppendInterval(riseDuration); // önce market kapanışını bekle
-        seq.Append(cart.transform.DOMove(entryPoint.position, moveDuration)
-            .SetEase(Ease.InOutSine))
-            .OnComplete(() =>
-            {
-                cart.SetActive(false);
-                Debug.Log("MerchantCart sahneden çıktı, market kapandı!");
-            });
+    private void LowerShopObjects()
+    {
+        for (int i = 0; i < shopObjectsParent.childCount; i++)
+        {
+            Transform obj = shopObjectsParent.GetChild(i);
+            Vector3 targetPos = originalPositions[i] - new Vector3(0, shopAnimOffset, 0);
+            obj.DOLocalMove(targetPos, shopAnimDuration).SetEase(Ease.InBack);
+        }
+
+        // kapanış tamamlanınca parent disable et
+        DOVirtual.DelayedCall(shopAnimDuration, () =>
+        {
+            if (shopObjectsParent != null)
+                shopObjectsParent.gameObject.SetActive(false);
+        });
+
+        AudioManager.Instance?.PlayShopSetup();
     }
 }
