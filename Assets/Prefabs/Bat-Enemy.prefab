@@ -237,7 +237,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3aa25b91dd613584c9513cbeeaaae8c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
+  maxHealth: 15
   currentHealth: 0
   stunOnHitDuration: 0.7
   disableDelayOnDeath: 1

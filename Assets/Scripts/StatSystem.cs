@@ -2,47 +2,42 @@
 
 public class StatSystem : MonoBehaviour
 {
-    [Header("Base Stats (Default Değerler)")]
-    [SerializeField] private int baseAttackPower = 10;
-    [SerializeField] private float baseAttackSpeed = 1f;
-    [SerializeField] private float baseMoveSpeed = 5f;
+    [Header("Stats")]
+    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private int attackPower = 10;
+    [SerializeField] private float attackSpeed = 1f;
+    [SerializeField] private float attackRange = 0.4f;
 
-    [Header("Current Stats (Runtime Değerler)")]
-    [SerializeField] private int attackPower;
-    [SerializeField] private float attackSpeed;
-    [SerializeField] private float moveSpeed;
-
-    // Public getter → başka scriptler okuyabilir ama değiştiremez
+    public float MoveSpeed => moveSpeed;
     public int AttackPower => attackPower;
     public float AttackSpeed => attackSpeed;
-    public float MoveSpeed => moveSpeed;
+    public float AttackRange => attackRange;
 
-    private void Awake()
+    // --- Upgrade metodları ---
+    public void AddMoveSpeed(float amount)
     {
-        ResetStats();
+        moveSpeed += amount;
     }
 
-    // === Statları base değerlerine sıfırla ===
-    public void ResetStats()
-    {
-        attackPower = baseAttackPower;
-        attackSpeed = baseAttackSpeed;
-        moveSpeed = baseMoveSpeed;
-    }
-
-    // === Upgrade Fonksiyonları ===
-    public void UpgradeAttack(int amount)
+    public void AddAttackPower(int amount)
     {
         attackPower += amount;
     }
 
-    public void UpgradeAttackSpeed(float multiplier)
+    public void IncreaseAttackSpeed(float percent)
     {
-        attackSpeed *= multiplier;
+        attackSpeed += attackSpeed * percent;
     }
 
-    public void UpgradeMoveSpeed(float multiplier)
+    // ✅ Artık StatSystem’in attackRange’ini büyütüyor
+    public void IncreaseAttackRange(float percent)
     {
-        moveSpeed *= multiplier;
+        float added = attackRange * percent;
+        attackRange += added;
+
+        // Hitbox boyutunu da güncelle
+        var attackSystem = GetComponent<AttackSystem>();
+        if (attackSystem != null)
+            attackSystem.ApplyHitboxUpgrade(percent);
     }
 }
