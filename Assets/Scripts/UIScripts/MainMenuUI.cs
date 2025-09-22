@@ -69,8 +69,8 @@ public class MainMenuUI : MonoBehaviour
             if (menuPanel != null) menuPanel.SetActive(false);
             if (optionsPanel != null) optionsPanel.SetActive(false);
 
-            if (returnMenuButton != null)
-                returnMenuButton.gameObject.SetActive(true);
+            //if (returnMenuButton != null)
+             //   returnMenuButton.gameObject.SetActive(true);
 
             AudioManager.Instance?.UnmuteAll();
             MusicManager.Instance?.UnmuteAll();
