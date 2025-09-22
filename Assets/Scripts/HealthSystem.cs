@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 
 public class HealthSystem : MonoBehaviour
 {
@@ -10,12 +11,24 @@ public class HealthSystem : MonoBehaviour
     [SerializeField] private float stunOnHitDuration = 0.5f;
     [SerializeField] private float disableDelayOnDeath = 1f;
 
+    [Header("Player Only Settings")]
+    [SerializeField] private bool isPlayer = false;       // ✅ sadece Player için
+    [SerializeField] private float playerStunDuration = 0.2f;
+    [SerializeField] private float iFrameDuration = 0.8f;
+    [SerializeField] private float blinkInterval = 0.1f;  // yanıp sönme hızı
+
     private Animator animator;
     private Collider enemyCollider;
     private bool isDead = false;
 
+    // Player özel değişkenler
+    private bool isInvincible = false;
+    private SpriteRenderer playerSprite; // sadece Player’da var
+    private PlayerMovement playerMovement;
+    private AttackSystem playerAttack;
+
     // Eventler
-    public System.Action OnDeath; // WaveManager ve KillCounterUI dinleyecek
+    public System.Action OnDeath;
     public System.Action<int, int> OnHealthChanged;
 
     private void Awake()
@@ -23,23 +36,41 @@ public class HealthSystem : MonoBehaviour
         currentHealth = maxHealth;
         animator = GetComponentInChildren<Animator>();
         enemyCollider = GetComponent<Collider>();
+
+        if (isPlayer)
+        {
+            playerSprite = GetComponentInChildren<SpriteRenderer>();
+            playerMovement = GetComponent<PlayerMovement>();
+            playerAttack = GetComponent<AttackSystem>();
+        }
     }
 
     public void TakeDamage(int amount)
     {
         if (isDead) return;
+        if (isPlayer && isInvincible) return; // ✅ I-frame aktifken hasar yeme
 
         currentHealth -= amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
-        var path = GetComponent<PathFollower>();
-        if (path != null) path.ApplyStun(stunOnHitDuration);
+        if (isPlayer)
+        {
+            // Stun ve I-frame başlat
+            StartCoroutine(PlayerStunRoutine());
+            StartCoroutine(InvincibilityRoutine());
+            AudioManager.Instance?.PlayPlayerHit(); // ✅ sadece Player hit sesi
+        }
+        else
+        {
+            var path = GetComponent<PathFollower>();
+            if (path != null) path.ApplyStun(stunOnHitDuration);
+            AudioManager.Instance?.PlayHit();
+        }
 
         if (currentHealth > 0)
         {
             if (animator != null) animator.SetTrigger("hit");
-            AudioManager.Instance?.PlayHit();
         }
         else
         {
@@ -64,7 +95,6 @@ public class HealthSystem : MonoBehaviour
         var dropper = GetComponent<ObjectDropper>();
         if (dropper != null) dropper.DropObjects();
 
-        // ✅ Ölüm eventini fırlat
         OnDeath?.Invoke();
 
         Invoke(nameof(DisableObject), disableDelayOnDeath);
@@ -92,4 +122,43 @@ public class HealthSystem : MonoBehaviour
 
     public int GetCurrentHealth() => currentHealth;
     public int GetMaxHealth() => maxHealth;
+
+    // === PLAYER ONLY ROUTINES ===
+    private IEnumerator PlayerStunRoutine()
+    {
+        if (playerMovement != null) playerMovement.enabled = false;
+        if (playerAttack != null) playerAttack.enabled = false;
+
+        yield return new WaitForSeconds(playerStunDuration);
+
+        if (!isDead)
+        {
+            if (playerMovement != null) playerMovement.enabled = true;
+            if (playerAttack != null) playerAttack.enabled = true;
+        }
+    }
+
+    private IEnumerator InvincibilityRoutine()
+    {
+        isInvincible = true;
+        float timer = 0f;
+        bool visible = true;
+
+        while (timer < iFrameDuration)
+        {
+            if (playerSprite != null)
+            {
+                visible = !visible;
+                playerSprite.color = visible ? Color.white : new Color(1f, 0f, 0f, 0.5f); // kırmızı/yarı saydam
+            }
+
+            yield return new WaitForSeconds(blinkInterval);
+            timer += blinkInterval;
+        }
+
+        if (playerSprite != null)
+            playerSprite.color = Color.white;
+
+        isInvincible = false;
+    }
 }

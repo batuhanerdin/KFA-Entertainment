@@ -25,14 +25,17 @@ public class EnemyAttack : MonoBehaviour
     private Transform player;
     private Animator animator;
     private PathFollower pathFollower;
+    private Transform spriteTransform;
 
     private float cooldownTimer = 0f;
     private bool isAttacking = false;
+    private Coroutine meleeDashCoroutine;
 
     private void Awake()
     {
         animator = GetComponentInChildren<Animator>();
         pathFollower = GetComponent<PathFollower>();
+        spriteTransform = animator != null ? animator.transform : transform;
 
         GameObject p = GameObject.FindGameObjectWithTag("Player");
         if (p != null) player = p.transform;
@@ -54,12 +57,9 @@ public class EnemyAttack : MonoBehaviour
     private void TryAttack()
     {
         float dist = Vector3.Distance(transform.position, player.position);
-        if (dist <= attackRange)
+        if (dist <= attackRange && Random.value <= attackChance)
         {
-            if (Random.value <= attackChance)
-            {
-                StartAttack();
-            }
+            StartAttack();
         }
     }
 
@@ -70,11 +70,16 @@ public class EnemyAttack : MonoBehaviour
         if (pathFollower != null) pathFollower.enabled = false;
         if (animator != null) animator.SetTrigger("attack");
 
+        // ✅ saldırı başlarken player’a dön
+        FacePlayer();
+
         Invoke(nameof(PerformAttack), attackDelay);
     }
 
     private void PerformAttack()
     {
+        if (!gameObject.activeInHierarchy) { EndAttack(); return; }
+
         if (meleeAttack)
             PerformMeleeAttack();
         else
@@ -88,12 +93,9 @@ public class EnemyAttack : MonoBehaviour
             Vector3 dir = (player.position - firePoint.position).normalized;
 
             GameObject proj = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
-
             Rigidbody rb = proj.GetComponent<Rigidbody>();
             if (rb != null)
-            {
                 rb.velocity = dir * projectileSpeed;
-            }
 
             Destroy(proj, projectileLifetime);
         }
@@ -103,12 +105,12 @@ public class EnemyAttack : MonoBehaviour
 
     private void PerformMeleeAttack()
     {
-        if (player == null) { EndAttack(); return; }
+        if (player == null || !gameObject.activeInHierarchy) { EndAttack(); return; }
 
         Vector3 dir = (player.position - transform.position).normalized;
         Vector3 targetPos = transform.position + dir * meleeDashDistance;
 
-        StartCoroutine(MeleeDash(targetPos));
+        meleeDashCoroutine = StartCoroutine(MeleeDash(targetPos));
     }
 
     private System.Collections.IEnumerator MeleeDash(Vector3 targetPos)
@@ -119,7 +121,6 @@ public class EnemyAttack : MonoBehaviour
             yield return null;
         }
 
-        // Dash bitti → player yakın mı kontrol et
         Collider[] hits = Physics.OverlapSphere(transform.position, meleeHitRange, playerLayer);
         foreach (Collider hit in hits)
         {
@@ -127,8 +128,6 @@ public class EnemyAttack : MonoBehaviour
             if (hs != null)
             {
                 hs.TakeDamage(meleeDamage);
-
-                // ✅ Player’a özel vurma sesi
                 AudioManager.Instance?.PlayPlayerHit();
             }
         }
@@ -140,6 +139,53 @@ public class EnemyAttack : MonoBehaviour
     {
         isAttacking = false;
         if (pathFollower != null) pathFollower.enabled = true;
+
+        if (meleeDashCoroutine != null)
+        {
+            StopCoroutine(meleeDashCoroutine);
+            meleeDashCoroutine = null;
+        }
+
+        // ✅ saldırı bitti → sprite tekrar sağa dönsün
+        ResetFacing();
+    }
+
+    public void CancelAttack()
+    {
+        CancelInvoke(nameof(PerformAttack));
+
+        if (meleeDashCoroutine != null)
+        {
+            StopCoroutine(meleeDashCoroutine);
+            meleeDashCoroutine = null;
+        }
+
+        EndAttack();
+    }
+
+    private void OnDisable()
+    {
+        CancelAttack();
+    }
+
+    private void FacePlayer()
+    {
+        if (player == null || spriteTransform == null) return;
+
+        float dir = player.position.x - transform.position.x;
+
+        Vector3 scale = spriteTransform.localScale;
+        scale.x = dir < 0 ? Mathf.Abs(scale.x) * -1f : Mathf.Abs(scale.x);
+        spriteTransform.localScale = scale;
+    }
+
+    private void ResetFacing()
+    {
+        if (spriteTransform == null) return;
+
+        Vector3 scale = spriteTransform.localScale;
+        scale.x = Mathf.Abs(scale.x); // sağa bakmaya döner
+        spriteTransform.localScale = scale;
     }
 
     private void OnDrawGizmosSelected()

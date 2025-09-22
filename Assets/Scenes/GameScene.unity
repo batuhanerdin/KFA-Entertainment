@@ -4650,7 +4650,7 @@ MonoBehaviour:
   attackPowerIncrease: 10
   moveSpeedIncrease: 1
   attackSpeedPercent: 0.1
-  attackRangePercent: 0.05
+  attackRangePercent: 0.07
   healthIncreaseAmount: 25
 --- !u!114 &514176314
 MonoBehaviour:
@@ -6141,8 +6141,8 @@ Transform:
   m_GameObject: {fileID: 799675312}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.196, y: 0, z: 0}
-  m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
+  m_LocalPosition: {x: 0.156, y: 0, z: 0}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 86021298}
@@ -7825,10 +7825,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 2
+  m_Radius: 0.8
+  m_Height: 2.3
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 0.3, z: 0}
 --- !u!54 &972209674
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -7885,6 +7885,10 @@ MonoBehaviour:
   currentHealth: 0
   stunOnHitDuration: 0.5
   disableDelayOnDeath: 1
+  isPlayer: 1
+  playerStunDuration: 0.4
+  iFrameDuration: 1
+  blinkInterval: 0.1
 --- !u!114 &972209677
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8531,8 +8535,8 @@ MonoBehaviour:
   cartMovementSfx: {fileID: 8300000, guid: 3033c95531fe38a4a9110ea7b990b989, type: 3}
   shopSetupSfx: {fileID: 8300000, guid: 29313ea9a21bac64e8026d26fae88ee0, type: 3}
   shopOpenSfx: {fileID: 8300000, guid: a043e8e253b20f045ade0e2916f2650c, type: 3}
-  sfxVolume: 0.85
-  playerHitVolume: 0.6
+  sfxVolume: 0.8
+  playerHitVolume: 0.45
   hitVolume: 0.1
   dieVolume: 0.7
   footstepVolume: 0.2

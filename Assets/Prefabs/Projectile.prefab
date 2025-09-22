@@ -133,7 +133,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.3, y: 0.3, z: 0.3}
+  m_Size: {x: 0.5, y: 0.5, z: 0.5}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1942356226212779096
 MonoBehaviour:
@@ -148,7 +148,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 10
-  targetTag: Player
   lifeTime: 3
   hitEffectPrefab: {fileID: 362261158077530393, guid: 20fda529c996a334da7fd65b48ea40df,
     type: 3}

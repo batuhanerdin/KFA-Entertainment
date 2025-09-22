@@ -106,6 +106,10 @@ MonoBehaviour:
   currentHealth: 0
   stunOnHitDuration: 0.7
   disableDelayOnDeath: 1
+  isPlayer: 0
+  playerStunDuration: 0.2
+  iFrameDuration: 0.8
+  blinkInterval: 0.1
 --- !u!114 &2310806207839866749
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -159,16 +163,16 @@ MonoBehaviour:
   attackRange: 5
   attackCooldown: 1
   attackChance: 1
-  attackDelay: 0.65
+  attackDelay: 0.3
   meleeAttack: 1
   projectilePrefab: {fileID: 3556917301605109467, guid: bc1123385ff404d4b9c7359248afd7ba,
     type: 3}
-  firePoint: {fileID: 0}
+  firePoint: {fileID: 4139224898736608524}
   projectileSpeed: 6
   projectileLifetime: 3
-  meleeDashDistance: 3
+  meleeDashDistance: 4
   meleeDashSpeed: 10
-  meleeHitRange: 1
+  meleeHitRange: 1.5
   meleeDamage: 10
   playerLayer:
     serializedVersion: 2
@@ -304,7 +308,7 @@ Transform:
   m_GameObject: {fileID: 2617741163969381499}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.2, z: -0.1}
+  m_LocalPosition: {x: 0, y: 0.1, z: -0.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
