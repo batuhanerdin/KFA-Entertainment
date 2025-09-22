@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 9109879968317625038}
   - component: {fileID: 2310806207839866749}
   - component: {fileID: 2646646124740507887}
+  - component: {fileID: -4537667774343722379}
   m_Layer: 8
   m_Name: Mushroom-Enemy
   m_TagString: Enemy
@@ -36,6 +37,7 @@ Transform:
   m_Children:
   - {fileID: 721385765880360274}
   - {fileID: 968958216646741345}
+  - {fileID: 4139224898736608524}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &5100498089882698716
@@ -100,7 +102,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3aa25b91dd613584c9513cbeeaaae8c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 50
+  maxHealth: 100
   currentHealth: 0
   stunOnHitDuration: 0.7
   disableDelayOnDeath: 1
@@ -142,6 +144,35 @@ MonoBehaviour:
   deathParticle: {fileID: 3548588485384254792, guid: 93716997edfea4a40af5254c1ccdb8e5,
     type: 3}
   dropPoint: {fileID: 968958216646741345}
+--- !u!114 &-4537667774343722379
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1320743542102932379}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aed320587bd5dfd45a10880784100fd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackRange: 5
+  attackCooldown: 1
+  attackChance: 1
+  attackDelay: 0.65
+  meleeAttack: 1
+  projectilePrefab: {fileID: 3556917301605109467, guid: bc1123385ff404d4b9c7359248afd7ba,
+    type: 3}
+  firePoint: {fileID: 0}
+  projectileSpeed: 6
+  projectileLifetime: 3
+  meleeDashDistance: 3
+  meleeDashSpeed: 10
+  meleeHitRange: 1
+  meleeDamage: 10
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1 &2537888084145358799
 GameObject:
   m_ObjectHideFlags: 0
@@ -274,6 +305,37 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.2, z: -0.1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 660270806917786161}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3086797867095673689
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4139224898736608524}
+  m_Layer: 8
+  m_Name: FirePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4139224898736608524
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3086797867095673689}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.56, y: 0.12, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

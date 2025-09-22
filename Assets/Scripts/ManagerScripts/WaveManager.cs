@@ -8,9 +8,12 @@ public class WaveManager : MonoBehaviour
     private PathSystem pathSystem;
     private GameManager gameManager;
 
-    private int nextWaveIndex = 0;     // sırada başlatılacak wave
-    private int runningSpawners = 0;   // şu an spawn eden kaç wave var
-    private int aliveEnemies = 0;      // sahnedeki toplam düşman
+    private int nextWaveIndex = 0;
+    private int runningSpawners = 0;
+    private int aliveEnemies = 0;
+
+    // KillCounterUI için event
+    public event System.Action OnEnemyDeath;
 
     private void Awake()
     {
@@ -18,7 +21,6 @@ public class WaveManager : MonoBehaviour
         gameManager = FindObjectOfType<GameManager>();
     }
 
-    // Her çağrıda sıradaki dalgayı BAŞLATIR (aktif dalga varken de çağrılabilir)
     public void StartNextWave()
     {
         if (nextWaveIndex >= waves.Length)
@@ -35,14 +37,12 @@ public class WaveManager : MonoBehaviour
 
     private IEnumerator RunWave(WaveConfig wave, int waveIndex)
     {
-        // Bu wave için toplam düşman sayısını aliveEnemies'e ekle
         int waveEnemyTotal = 0;
         foreach (var e in wave.enemies) waveEnemyTotal += Mathf.Max(0, e.enemyCount);
         aliveEnemies += waveEnemyTotal;
 
         runningSpawners++;
 
-        // Spawn sırası (bu wave için)
         foreach (var e in wave.enemies)
         {
             for (int i = 0; i < e.enemyCount; i++)
@@ -52,7 +52,6 @@ public class WaveManager : MonoBehaviour
             }
         }
 
-        // Bu wave’in spawn’ı tamamlandı
         runningSpawners--;
         MaybeNotifyAllCleared();
     }
@@ -64,23 +63,23 @@ public class WaveManager : MonoBehaviour
 
         GameObject enemy = Instantiate(enemyPrefab, startNode.transform.position, Quaternion.identity);
 
-        // Path
         PathFollower follower = enemy.GetComponent<PathFollower>();
         if (follower != null)
             follower.SetStartNode(startNode);
 
-        // Health → ölünce WaveManager’a haber ver
         HealthSystem health = enemy.GetComponent<HealthSystem>();
         if (health != null)
-            health.OnDeath += OnEnemyDeath;
+            health.OnDeath += OnEnemyDeathHandler;
     }
 
-    public void OnEnemyDeath()
+    private void OnEnemyDeathHandler()
     {
+        // KillCounterUI için event
+        OnEnemyDeath?.Invoke();
+
         OnEnemyRemoved();
     }
 
-    // Kaçarak sona ulaşanlar da buradan eksiltilir (PathFollower çağırır)
     public void OnEnemyRemoved()
     {
         aliveEnemies = Mathf.Max(0, aliveEnemies - 1);
@@ -89,14 +88,12 @@ public class WaveManager : MonoBehaviour
 
     private void MaybeNotifyAllCleared()
     {
-        // Sahne tamamen temizlendi mi? (Spawn eden wave yok & canlı düşman yok)
         if (runningSpawners <= 0 && aliveEnemies <= 0)
         {
-            gameManager.OnWaveFinished(); // mola evresi
+            gameManager.OnWaveFinished();
         }
     }
 
-    // UI / kontrol için
     public bool HasActiveEnemies() => aliveEnemies > 0;
     public bool HasMoreWaves() => nextWaveIndex < waves.Length;
 }

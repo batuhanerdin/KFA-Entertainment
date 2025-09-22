@@ -137,6 +137,37 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!1 &4878836981626633020
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4812329924279144266}
+  m_Layer: 8
+  m_Name: FirePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4812329924279144266
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4878836981626633020}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.14, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4078913061508240590}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5071243513290652727
 GameObject:
   m_ObjectHideFlags: 0
@@ -151,6 +182,7 @@ GameObject:
   - component: {fileID: 9147301924516124054}
   - component: {fileID: 7407701702187914357}
   - component: {fileID: 4672304647162879811}
+  - component: {fileID: 6040219665411272305}
   m_Layer: 8
   m_Name: PinkMushroom-Enemy
   m_TagString: Enemy
@@ -173,6 +205,7 @@ Transform:
   m_Children:
   - {fileID: 6347344037337245838}
   - {fileID: 4589996380643971523}
+  - {fileID: 4812329924279144266}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &5164847278055568698
@@ -279,3 +312,32 @@ MonoBehaviour:
   deathParticle: {fileID: 3548588485384254792, guid: eae8b9bdce7e1e1458c2370aa5e33bd9,
     type: 3}
   dropPoint: {fileID: 4589996380643971523}
+--- !u!114 &6040219665411272305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5071243513290652727}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aed320587bd5dfd45a10880784100fd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackRange: 15
+  attackCooldown: 1
+  attackChance: 1
+  attackDelay: 1.13
+  meleeAttack: 0
+  projectilePrefab: {fileID: 3556917301605109467, guid: bc1123385ff404d4b9c7359248afd7ba,
+    type: 3}
+  firePoint: {fileID: 4812329924279144266}
+  projectileSpeed: 6
+  projectileLifetime: 3
+  meleeDashDistance: 3
+  meleeDashSpeed: 10
+  meleeHitRange: 1
+  meleeDamage: 10
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 64

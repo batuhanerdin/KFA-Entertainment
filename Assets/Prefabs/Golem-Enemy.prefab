@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4899614618548497955}
   - component: {fileID: 4037329548272486662}
   - component: {fileID: 3991147739881236990}
+  - component: {fileID: 4887040171885045684}
   m_Layer: 8
   m_Name: Golem-Enemy
   m_TagString: Enemy
@@ -36,6 +37,7 @@ Transform:
   m_Children:
   - {fileID: 570835629756373625}
   - {fileID: 6468036544594719929}
+  - {fileID: 7680045920362434312}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &1417551576355134846
@@ -142,6 +144,66 @@ MonoBehaviour:
   deathParticle: {fileID: 3548588485384254792, guid: 32af7ea914938b14dad9bd1e6e31ec76,
     type: 3}
   dropPoint: {fileID: 6468036544594719929}
+--- !u!114 &4887040171885045684
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 835210960601801207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aed320587bd5dfd45a10880784100fd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackRange: 15
+  attackCooldown: 1
+  attackChance: 1
+  attackDelay: 0.3
+  meleeAttack: 0
+  projectilePrefab: {fileID: 3556917301605109467, guid: bc1123385ff404d4b9c7359248afd7ba,
+    type: 3}
+  firePoint: {fileID: 7680045920362434312}
+  projectileSpeed: 6
+  projectileLifetime: 3
+  meleeDashDistance: 3
+  meleeDashSpeed: 10
+  meleeHitRange: 1
+  meleeDamage: 10
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 64
+--- !u!1 &1110803892683325445
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7680045920362434312}
+  m_Layer: 8
+  m_Name: FirePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7680045920362434312
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1110803892683325445}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.59, y: 0.3, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1555772221175460045}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7565126612272246604
 GameObject:
   m_ObjectHideFlags: 0

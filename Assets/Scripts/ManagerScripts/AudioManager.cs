@@ -8,6 +8,7 @@ public class AudioManager : MonoBehaviour
     public AudioSource sfxSource;
 
     [Header("SFX Clips")]
+    [SerializeField] private AudioClip playerHitSfx;
     [SerializeField] private AudioClip dieSfx;
     [SerializeField] private AudioClip[] footstepClips;
     [SerializeField] private AudioClip playerAttackSfx;
@@ -23,6 +24,7 @@ public class AudioManager : MonoBehaviour
     [Range(0f, 1f)] public float sfxVolume = 1f;
 
     [Header("Individual Volumes")]
+    [Range(0f, 1f)] public float playerHitVolume = 1f;
     [Range(0f, 1f)] public float hitVolume = 1f;
     [Range(0f, 1f)] public float dieVolume = 1f;
     [Range(0f, 1f)] public float footstepVolume = 1f;
@@ -61,6 +63,12 @@ public class AudioManager : MonoBehaviour
         if (hitSfxClips == null || hitSfxClips.Length == 0) return;
         int i = Random.Range(0, hitSfxClips.Length);
         PlaySfxOneShot(hitSfxClips[i], hitVolume * volume);
+    }
+
+    public void PlayPlayerHit(float volume = 1f)
+    {
+        if (playerHitSfx != null)
+            PlaySfxOneShot(playerHitSfx, playerHitVolume * volume);
     }
 
     public void PlayDie(float volume = 1f)

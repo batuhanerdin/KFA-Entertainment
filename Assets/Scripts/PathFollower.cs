@@ -15,24 +15,41 @@ public class PathFollower : MonoBehaviour
 
     private void Start()
     {
-        if (currentNode != null) SetTarget(currentNode);
+        if (currentNode != null)
+            SetTarget(currentNode);
     }
 
     private void Update()
     {
-        // Stun aktifse sayaç çalışsın
-        if (isStunned)
-        {
-            stunTimer -= Time.deltaTime;
-            if (stunTimer <= 0f) isStunned = false;
-            return; // ✅ stun sırasında hareket etmez
-        }
+        HandleStunTimer();
+    }
 
-        if (currentNode == null) return;
+    private void FixedUpdate()
+    {
+        if (isStunned || currentNode == null) return;
 
+        MoveTowardsTarget();
+        CheckNodeReached();
+    }
+
+    // === Fonksiyonlar ===
+    private void HandleStunTimer()
+    {
+        if (!isStunned) return;
+
+        stunTimer -= Time.deltaTime;
+        if (stunTimer <= 0f)
+            isStunned = false;
+    }
+
+    private void MoveTowardsTarget()
+    {
         Vector3 dir = (targetPos - transform.position).normalized;
-        transform.position += dir * moveSpeed * Time.deltaTime;
+        transform.position += dir * moveSpeed * Time.fixedDeltaTime;
+    }
 
+    private void CheckNodeReached()
+    {
         float dist = Vector3.Distance(transform.position, targetPos);
         if (dist < nodeReachThreshold)
         {
@@ -66,12 +83,12 @@ public class PathFollower : MonoBehaviour
     private void OnPathCompleted()
     {
         WaveManager wm = FindObjectOfType<WaveManager>();
-        if (wm != null) wm.OnEnemyRemoved();
+        if (wm != null)
+            wm.OnEnemyRemoved();
 
         Destroy(gameObject);
     }
 
-    // ✅ HealthSystem burayı çağıracak
     public void ApplyStun(float duration)
     {
         isStunned = true;

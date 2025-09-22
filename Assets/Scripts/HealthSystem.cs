@@ -14,7 +14,8 @@ public class HealthSystem : MonoBehaviour
     private Collider enemyCollider;
     private bool isDead = false;
 
-    public System.Action OnDeath;
+    // Eventler
+    public System.Action OnDeath; // WaveManager ve KillCounterUI dinleyecek
     public System.Action<int, int> OnHealthChanged;
 
     private void Awake()
@@ -60,10 +61,10 @@ public class HealthSystem : MonoBehaviour
         var path = GetComponent<PathFollower>();
         if (path != null) path.enabled = false;
 
-        // ✅ Drop işlemleri ObjectDropper’a taşındı
         var dropper = GetComponent<ObjectDropper>();
         if (dropper != null) dropper.DropObjects();
 
+        // ✅ Ölüm eventini fırlat
         OnDeath?.Invoke();
 
         Invoke(nameof(DisableObject), disableDelayOnDeath);
