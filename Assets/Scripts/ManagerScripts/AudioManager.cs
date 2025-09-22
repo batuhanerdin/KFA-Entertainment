@@ -14,7 +14,8 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip playerAttackSfx;
     [SerializeField] private AudioClip[] hitSfxClips;
     [SerializeField] private AudioClip coinPickupSfx;
-
+    [SerializeField] private AudioClip obeliskHitSfx;
+    
     [Header("Shop / Cart Clips")]
     [SerializeField] private AudioClip cartMovementSfx;
     [SerializeField] private AudioClip shopSetupSfx;
@@ -33,6 +34,7 @@ public class AudioManager : MonoBehaviour
     [Range(0f, 1f)] public float shopSetupVolume = 1f;
     [Range(0f, 1f)] public float shopOpenVolume = 1f;
     [Range(0f, 1f)] public float coinPickupVolume = 1f;
+    [Range(0f, 1f)] public float obeliskHitVolume = 1f;
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -82,6 +84,10 @@ public class AudioManager : MonoBehaviour
         if (footstepClips == null || footstepClips.Length == 0) return;
         int i = Random.Range(0, footstepClips.Length);
         PlaySfxOneShot(footstepClips[i], footstepVolume * volume);
+    }
+    public void PlayObeliskHit()
+    {
+        PlaySfxOneShot(obeliskHitSfx, obeliskHitVolume);
     }
 
     // === Cart & Shop Sesleri ===

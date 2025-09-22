@@ -12,10 +12,14 @@ public class HealthSystem : MonoBehaviour
     [SerializeField] private float disableDelayOnDeath = 1f;
 
     [Header("Player Only Settings")]
-    [SerializeField] private bool isPlayer = false;       // ✅ sadece Player için
+    [SerializeField] private bool isPlayer = false;
     [SerializeField] private float playerStunDuration = 0.2f;
     [SerializeField] private float iFrameDuration = 0.8f;
-    [SerializeField] private float blinkInterval = 0.1f;  // yanıp sönme hızı
+    [SerializeField] private float blinkInterval = 0.1f;
+
+    [Header("Revive Settings (Player)")]
+    [SerializeField] private float respawnDelay = 2f;   // ölümden sonra bekleme
+    [SerializeField] private float reviveDuration = 3f; // revive animasyonu + iframes
 
     private Animator animator;
     private Collider enemyCollider;
@@ -23,7 +27,7 @@ public class HealthSystem : MonoBehaviour
 
     // Player özel değişkenler
     private bool isInvincible = false;
-    private SpriteRenderer playerSprite; // sadece Player’da var
+    private SpriteRenderer playerSprite;
     private PlayerMovement playerMovement;
     private AttackSystem playerAttack;
 
@@ -48,7 +52,7 @@ public class HealthSystem : MonoBehaviour
     public void TakeDamage(int amount)
     {
         if (isDead) return;
-        if (isPlayer && isInvincible) return; // ✅ I-frame aktifken hasar yeme
+        if (isPlayer && isInvincible) return;
 
         currentHealth -= amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
@@ -56,10 +60,9 @@ public class HealthSystem : MonoBehaviour
 
         if (isPlayer)
         {
-            // Stun ve I-frame başlat
             StartCoroutine(PlayerStunRoutine());
             StartCoroutine(InvincibilityRoutine());
-            AudioManager.Instance?.PlayPlayerHit(); // ✅ sadece Player hit sesi
+            AudioManager.Instance?.PlayPlayerHit();
         }
         else
         {
@@ -97,7 +100,10 @@ public class HealthSystem : MonoBehaviour
 
         OnDeath?.Invoke();
 
-        Invoke(nameof(DisableObject), disableDelayOnDeath);
+        if (isPlayer)
+            StartCoroutine(ReviveRoutine());
+        else
+            Invoke(nameof(DisableObject), disableDelayOnDeath);
     }
 
     private void DisableObject()
@@ -149,7 +155,7 @@ public class HealthSystem : MonoBehaviour
             if (playerSprite != null)
             {
                 visible = !visible;
-                playerSprite.color = visible ? Color.white : new Color(1f, 0f, 0f, 0.5f); // kırmızı/yarı saydam
+                playerSprite.color = visible ? Color.white : new Color(1f, 0f, 0f, 0.5f);
             }
 
             yield return new WaitForSeconds(blinkInterval);
@@ -158,6 +164,49 @@ public class HealthSystem : MonoBehaviour
 
         if (playerSprite != null)
             playerSprite.color = Color.white;
+
+        isInvincible = false;
+    }
+
+    private IEnumerator ReviveRoutine()
+    {
+        yield return new WaitForSeconds(respawnDelay);
+
+        if (animator != null) animator.SetTrigger("revive");
+
+        // yeniden aktif ol
+        isDead = false;
+        currentHealth = maxHealth;
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+
+        if (enemyCollider != null)
+            enemyCollider.enabled = true;
+
+        if (playerMovement != null) playerMovement.enabled = false;
+        if (playerAttack != null) playerAttack.enabled = false;
+
+        isInvincible = true;
+
+        // blink efekti revive süresince
+        float timer = 0f;
+        bool visible = true;
+        while (timer < reviveDuration)
+        {
+            if (playerSprite != null)
+            {
+                visible = !visible;
+                playerSprite.color = visible ? Color.white : new Color(1f, 0f, 0f, 0.5f);
+            }
+
+            yield return new WaitForSeconds(blinkInterval);
+            timer += blinkInterval;
+        }
+
+        if (playerSprite != null)
+            playerSprite.color = Color.white;
+
+        if (playerMovement != null) playerMovement.enabled = true;
+        if (playerAttack != null) playerAttack.enabled = true;
 
         isInvincible = false;
     }

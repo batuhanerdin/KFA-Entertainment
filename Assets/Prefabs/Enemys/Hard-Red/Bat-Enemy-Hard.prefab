@@ -247,6 +247,8 @@ MonoBehaviour:
   playerStunDuration: 0.2
   iFrameDuration: 0.8
   blinkInterval: 0.1
+  respawnDelay: 2
+  reviveDuration: 3
 --- !u!114 &1217222694280762936
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -305,7 +307,7 @@ MonoBehaviour:
   projectilePrefab: {fileID: 3556917301605109467, guid: bc1123385ff404d4b9c7359248afd7ba,
     type: 3}
   firePoint: {fileID: 5310511792684035609}
-  projectileSpeed: 6
+  projectileSpeed: 10
   projectileLifetime: 3
   meleeDashDistance: 3
   meleeDashSpeed: 10

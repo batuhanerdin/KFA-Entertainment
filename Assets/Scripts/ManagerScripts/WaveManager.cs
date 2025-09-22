@@ -94,6 +94,11 @@ public class WaveManager : MonoBehaviour
     public void OnEnemyRemoved()
     {
         aliveEnemies = Mathf.Max(0, aliveEnemies - 1);
+
+        // ✅ Obelisk hasar alsın
+        if (ObeliskManager.Instance != null)
+            ObeliskManager.Instance.TakeDamage(1);
+
         MaybeNotifyAllCleared();
     }
 
