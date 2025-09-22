@@ -82,6 +82,14 @@ public class PathFollower : MonoBehaviour
 
     private void OnPathCompleted()
     {
+        // ✅ Obelisk hasar alsın
+        if (ObeliskManager.Instance != null)
+            ObeliskManager.Instance.TakeDamage(1);
+
+        // ✅ Ses çalsın
+        AudioManager.Instance?.PlayObeliskHit();
+
+        // WaveManager’a bildir
         WaveManager wm = FindObjectOfType<WaveManager>();
         if (wm != null)
             wm.OnEnemyRemoved();

@@ -52,6 +52,18 @@ public class MusicManager : MonoBehaviour
         }
     }
 
+    public void MuteAll()
+    {
+        foreach (var source in GetComponentsInChildren<AudioSource>())
+            source.mute = true;
+    }
+
+    public void UnmuteAll()
+    {
+        foreach (var source in GetComponentsInChildren<AudioSource>())
+            source.mute = false;
+    }
+
     // === PUBLIC API ===
 
     public void PlayChillMusic()

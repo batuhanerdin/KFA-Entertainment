@@ -51,7 +51,17 @@ public class AudioManager : MonoBehaviour
             sfxSource.playOnAwake = false;
         }
     }
+    public void MuteAll()
+    {
+        foreach (var source in GetComponentsInChildren<AudioSource>())
+            source.mute = true;
+    }
 
+    public void UnmuteAll()
+    {
+        foreach (var source in GetComponentsInChildren<AudioSource>())
+            source.mute = false;
+    }
     // === Internal helper ===
     private void PlaySfxOneShot(AudioClip clip, float mult = 1f)
     {

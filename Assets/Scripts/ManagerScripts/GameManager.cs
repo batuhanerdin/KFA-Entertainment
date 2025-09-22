@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
             HandleWaveKey();
     }
 
-    private void HandleWaveKey()
+    public void HandleWaveKey()
     {
         if (inBreak && waveManager.HasMoreWaves())
         {

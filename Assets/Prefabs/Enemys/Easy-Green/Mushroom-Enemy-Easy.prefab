@@ -110,6 +110,8 @@ MonoBehaviour:
   playerStunDuration: 0.2
   iFrameDuration: 0.8
   blinkInterval: 0.1
+  respawnDelay: 2
+  reviveDuration: 3
 --- !u!114 &2310806207839866749
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -140,8 +142,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   coinPrefab: {fileID: 3354059232915384412, guid: dc98c10b106c6214db80c671f716742f,
     type: 3}
-  minCoinValue: 2
-  maxCoinValue: 6
+  minCoinValue: 4
+  maxCoinValue: 12
   lowValueSprite: {fileID: 21300000, guid: 8ffa7a26aca3aba4a82cc241a5779bc2, type: 3}
   midValueSprite: {fileID: 21300000, guid: 678c8b5ac43c4d446bd4276e2e88f13b, type: 3}
   highValueSprite: {fileID: 21300000, guid: 0b74a2936a284a945a91d0600c950b9b, type: 3}
