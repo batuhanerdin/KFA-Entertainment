@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 3991147739881236990}
   - component: {fileID: 4887040171885045684}
   m_Layer: 8
-  m_Name: Golem-Enemy
+  m_Name: Golem-Enemy-Medium
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -102,9 +102,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3aa25b91dd613584c9513cbeeaaae8c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
+  maxHealth: 700
   currentHealth: 0
-  stunOnHitDuration: 0.7
+  stunOnHitDuration: 0.3
   disableDelayOnDeath: 1
   isPlayer: 0
   playerStunDuration: 0.2
@@ -123,7 +123,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentNode: {fileID: 0}
-  moveSpeed: 4
+  moveSpeed: 1.4
   nodeReachThreshold: 0.3
   spreadRadius: 3
 --- !u!114 &3991147739881236990
@@ -140,8 +140,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   coinPrefab: {fileID: 3354059232915384412, guid: dc98c10b106c6214db80c671f716742f,
     type: 3}
-  minCoinValue: 10
-  maxCoinValue: 20
+  minCoinValue: 40
+  maxCoinValue: 60
   lowValueSprite: {fileID: 21300000, guid: 8ffa7a26aca3aba4a82cc241a5779bc2, type: 3}
   midValueSprite: {fileID: 21300000, guid: 678c8b5ac43c4d446bd4276e2e88f13b, type: 3}
   highValueSprite: {fileID: 21300000, guid: 0b74a2936a284a945a91d0600c950b9b, type: 3}
@@ -160,8 +160,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aed320587bd5dfd45a10880784100fd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRange: 15
-  attackCooldown: 1
+  attackRange: 25
+  attackCooldown: 7
   attackChance: 1
   attackDelay: 0.3
   meleeAttack: 0
@@ -292,7 +292,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a290ca1dcaf3d4540af8fdabda3e5d37, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

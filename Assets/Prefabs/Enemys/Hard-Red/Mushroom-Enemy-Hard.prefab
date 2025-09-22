@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 2646646124740507887}
   - component: {fileID: -4537667774343722379}
   m_Layer: 8
-  m_Name: Mushroom-Enemy
+  m_Name: Mushroom-Enemy-Hard
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -102,7 +102,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3aa25b91dd613584c9513cbeeaaae8c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
+  maxHealth: 160
   currentHealth: 0
   stunOnHitDuration: 0.7
   disableDelayOnDeath: 1
@@ -123,7 +123,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentNode: {fileID: 0}
-  moveSpeed: 4
+  moveSpeed: 2.5
   nodeReachThreshold: 0.3
   spreadRadius: 3
 --- !u!114 &2646646124740507887
@@ -140,8 +140,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   coinPrefab: {fileID: 3354059232915384412, guid: dc98c10b106c6214db80c671f716742f,
     type: 3}
-  minCoinValue: 2
-  maxCoinValue: 6
+  minCoinValue: 25
+  maxCoinValue: 40
   lowValueSprite: {fileID: 21300000, guid: 8ffa7a26aca3aba4a82cc241a5779bc2, type: 3}
   midValueSprite: {fileID: 21300000, guid: 678c8b5ac43c4d446bd4276e2e88f13b, type: 3}
   highValueSprite: {fileID: 21300000, guid: 0b74a2936a284a945a91d0600c950b9b, type: 3}
@@ -161,8 +161,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackRange: 5
-  attackCooldown: 1
-  attackChance: 1
+  attackCooldown: 4
+  attackChance: 0.3
   attackDelay: 0.3
   meleeAttack: 1
   projectilePrefab: {fileID: 3556917301605109467, guid: bc1123385ff404d4b9c7359248afd7ba,
@@ -230,7 +230,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: e4537c9c97e8df44e8c86b075c386f5e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

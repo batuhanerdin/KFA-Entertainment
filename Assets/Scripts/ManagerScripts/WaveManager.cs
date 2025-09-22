@@ -4,6 +4,7 @@ using System.Collections;
 public class WaveManager : MonoBehaviour
 {
     [SerializeField] private WaveConfig[] waves;
+    [SerializeField] private GameObject portal; // ✅ Portal objesi (Inspector’dan atayacaksın)
 
     private PathSystem pathSystem;
     private GameManager gameManager;
@@ -19,6 +20,9 @@ public class WaveManager : MonoBehaviour
     {
         pathSystem = FindObjectOfType<PathSystem>();
         gameManager = FindObjectOfType<GameManager>();
+
+        if (portal != null)
+            portal.SetActive(false); // ✅ Başlangıçta kapalı
     }
 
     public void StartNextWave()
@@ -37,6 +41,9 @@ public class WaveManager : MonoBehaviour
 
     private IEnumerator RunWave(WaveConfig wave, int waveIndex)
     {
+        // ✅ Portal aç
+        if (portal != null) portal.SetActive(true);
+
         int waveEnemyTotal = 0;
         foreach (var e in wave.enemies) waveEnemyTotal += Mathf.Max(0, e.enemyCount);
         aliveEnemies += waveEnemyTotal;
@@ -53,6 +60,10 @@ public class WaveManager : MonoBehaviour
         }
 
         runningSpawners--;
+
+        // ✅ Spawn bitince portal kapat
+        if (portal != null) portal.SetActive(false);
+
         MaybeNotifyAllCleared();
     }
 
